@@ -34,7 +34,7 @@ const deleteCard = (req, res) => {
           .status(ERROR_CODE_404)
           .send({ message: 'Картинка с указанным id не найдена' });
       }
-      return res.status(201).send(card);
+      return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
