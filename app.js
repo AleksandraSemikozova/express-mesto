@@ -10,6 +10,8 @@ const cardsRouter = require('./routes/cards');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
+const error = require('./middlewares/error');
+const linkValidator = require('./middlewares/link-validation');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -39,8 +41,7 @@ app.post(
         .pattern(new RegExp('^[A-Za-z0-9]{8,30}$')),
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string()
-        .regex(/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/),
+      avatar: Joi.string().custom(linkValidator),
     }),
   }),
   createUser,
@@ -56,16 +57,7 @@ app.all('*', () => {
 
 app.use(errors());
 
-app.use((err, req, res) => {
-  const { statusCode = 500, message } = err;
-  res
-    .status(statusCode)
-    .send({
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-});
+app.use(error);
 
 app.listen(PORT, () => {
   console.log('Express is running');

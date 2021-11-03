@@ -42,7 +42,8 @@ const deleteCard = (req, res, next) => {
           })
           .catch(next);
       }
-    });
+    })
+    .catch(next);
 };
 
 const likeCard = (req, res, next) => {
